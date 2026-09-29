@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>download-tool</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M12 3v10m0 0 4-4m-4 4-4-4M5 16.5v1A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-1" />
+            </svg>
+          </span>
+          <div>
+            <h1>download-tool</h1>
+            <p id="headerSummary">Chrome 下载管理器</p>
+          </div>
+        </div>
+        <button class="icon-button" id="refreshButton" type="button" aria-label="刷新下载列表" title="刷新">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 11a8 8 0 1 0-2.34 5.66M20 5v6h-6" />
+          </svg>
+        </button>
+      </header>
+
+      <section class="toolbar" aria-label="搜索和筛选">
+        <label class="visually-hidden" for="searchInput">搜索文件名、路径或来源站点</label>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="搜索文件名或来源" />
+          <button id="clearSearchButton" class="search-clear" type="button" aria-label="清空搜索" title="清空搜索" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m8 8 8 8M16 8l-8 8" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="filter-row" role="group" aria-label="下载状态筛选">
+          <button class="filter-chip is-active" type="button" aria-pressed="true" data-filter="all">全部</button>
+          <button class="filter-chip" type="button" aria-pressed="false" data-filter="active">下载中</button>
+          <button class="filter-chip" type="button" aria-pressed="false" data-filter="complete">已完成</button>
+          <button class="filter-chip" type="button" aria-pressed="false" data-filter="interrupted">失败/取消</button>
+        </div>
+      </section>
+
+      <main class="content" id="content">
+        <div class="skeleton-list" id="skeletonState" role="status" aria-label="正在读取下载记录">
+          <div class="skeleton-card"><span></span><div><i></i><i></i><i></i></div></div>
+          <div class="skeleton-card"><span></span><div><i></i><i></i><i></i></div></div>
+          <div class="skeleton-card"><span></span><div><i></i><i></i><i></i></div></div>
+        </div>
+
+        <section class="state-panel" id="errorState" role="alert" hidden>
+          <span class="state-icon state-icon-error" aria-hidden="true">!</span>
+          <h2>无法读取下载记录</h2>
+          <p id="errorMessage">请检查扩展权限后重试。</p>
+          <button class="secondary-button" id="retryButton" type="button">重试</button>
+        </section>
+
+        <section class="state-panel" id="emptyState" hidden>
+          <span class="state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 3v10m0 0 4-4m-4 4-4-4M5 17v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1" />
+            </svg>
+          </span>
+          <h2 id="emptyTitle">还没有下载记录</h2>
+          <p id="emptyDescription">使用 Chrome 下载文件后，会自动显示在这里。</p>
+        </section>
+
+        <ul class="download-list" id="downloadList" aria-label="下载列表" hidden></ul>
+      </main>
+
+      <footer class="app-footer" id="appFooter" hidden>
+        <span id="resultCount" role="status" aria-live="polite">共 0 项</span>
+        <button class="text-button" id="loadMoreButton" type="button" hidden>加载更多</button>
+      </footer>
+    </div>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+    <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="dialogTitle" aria-describedby="dialogDescription">
+      <form method="dialog">
+        <div class="dialog-icon" id="dialogIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5" />
+          </svg>
+        </div>
+        <div class="dialog-copy">
+          <h2 id="dialogTitle">删除磁盘文件？</h2>
+          <p id="dialogDescription"></p>
+          <p class="dialog-note" id="dialogNote"></p>
+        </div>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="dialogCancelButton" value="cancel">取消</button>
+          <button class="danger-button" id="dialogConfirmButton" value="confirm">删除文件</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
